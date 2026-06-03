@@ -28,6 +28,7 @@ import {
 } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useRouter } from "next/navigation";
+import { getShortText, getColorFromName } from "@/lib/utils";
 
 export default function NavbarMenu() {
   const { data: session } = useSession();
@@ -91,8 +92,13 @@ export default function NavbarMenu() {
             <Button variant="ghost" className="relative h-9 w-9 rounded-full">
               <Avatar className="h-8 w-8 rounded-full">
                 <AvatarImage src={user.image} alt={user.name || "User"} />
-                <AvatarFallback>
-                  {(user.name || "U").charAt(0).toUpperCase()}
+                <AvatarFallback
+                  className="text-primary-foreground"
+                  style={{
+                    background: `linear-gradient(to right bottom, oklch(${getColorFromName(user.name)} / 0.3), oklch(${getColorFromName(user.name)}))`,
+                  }}
+                >
+                  {getShortText(user.name)}
                 </AvatarFallback>
               </Avatar>
             </Button>
@@ -102,8 +108,13 @@ export default function NavbarMenu() {
               <div className="flex flex-row justify-center items-center gap-2">
                 <Avatar className="h-10 w-10 rounded-full">
                   <AvatarImage src={user.image} alt={user.name || "User"} />
-                  <AvatarFallback>
-                    {(user.name || "U").charAt(0).toUpperCase()}
+                  <AvatarFallback
+                    className="text-primary-foreground"
+                    style={{
+                      background: `linear-gradient(to right bottom, oklch(${getColorFromName(user.name)} / 0.3), oklch(${getColorFromName(user.name)}))`,
+                    }}
+                  >
+                    {getShortText(user.name)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col space-y-1">

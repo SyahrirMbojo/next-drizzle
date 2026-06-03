@@ -7,6 +7,8 @@ import { format } from "date-fns";
 import { ButtonGroup } from "@/components/ui/button-group";
 import EditUser from "./edit-user";
 import DeleteUser from "./delete-user";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { getColorFromName, getShortText } from "@/lib/utils";
 
 const columns: TableColumnModel[] = [
   {
@@ -57,7 +59,23 @@ export default async function UserTable({
           return (
             <TableRow key={index}>
               <TableCell>{noPage + index}</TableCell>
-              <TableCell>{row.name}</TableCell>
+              <TableCell>
+                <div className="flex flex-row items-center gap-3">
+                  <Avatar className="h-8 w-8 rounded-full">
+                    <AvatarFallback
+                      className="text-primary-foreground"
+                      style={{
+                        background: `linear-gradient(to right bottom, oklch(${getColorFromName(
+                          row.name!,
+                        )} / 0.3), oklch(${getColorFromName(row.name!)}))`,
+                      }}
+                    >
+                      {getShortText(row.name!)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span>{row.name}</span>
+                </div>
+              </TableCell>
               <TableCell className="lowercase">{row.email}</TableCell>
               <TableCell>{formatted}</TableCell>
               <TableCell>
