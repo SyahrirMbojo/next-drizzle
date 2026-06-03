@@ -20,8 +20,7 @@ import {
 } from "./ui/select";
 import { useParamsCustom } from "@/lib/global-client";
 import { MetaModel } from "@/app/users/user-model";
-
-const listRowPage = [10, 25, 50, 100];
+import { listRowPagination } from "@/lib/utils";
 
 type PropsPagination = {
   meta: MetaModel;
@@ -34,31 +33,33 @@ export default function PaginationDynamic({ meta }: PropsPagination) {
   const generatePages = () => {
     const pages: (number | string)[] = [];
 
-    // selalu tampilkan page pertama
-    pages.push(1);
+    if (meta.total > 0) {
+      // selalu tampilkan page pertama
+      pages.push(1);
 
-    // ellipsis kiri
-    if (meta.page > 3) {
-      pages.push("left-ellipsis");
-    }
+      // ellipsis kiri
+      if (meta.page > 3) {
+        pages.push("left-ellipsis");
+      }
 
-    // page sekitar active
-    for (
-      let i = Math.max(2, meta.page - 1);
-      i <= Math.min(meta.totalPages - 1, meta.page + 1);
-      i++
-    ) {
-      pages.push(i);
-    }
+      // page sekitar active
+      for (
+        let i = Math.max(2, meta.page - 1);
+        i <= Math.min(meta.totalPages - 1, meta.page + 1);
+        i++
+      ) {
+        pages.push(i);
+      }
 
-    // ellipsis kanan
-    if (meta.page < meta.totalPages - 2) {
-      pages.push("right-ellipsis");
-    }
+      // ellipsis kanan
+      if (meta.page < meta.totalPages - 2) {
+        pages.push("right-ellipsis");
+      }
 
-    // selalu tampilkan page terakhir
-    if (meta.totalPages > 1) {
-      pages.push(meta.totalPages);
+      // selalu tampilkan page terakhir
+      if (meta.totalPages > 1) {
+        pages.push(meta.totalPages);
+      }
     }
 
     return pages;
@@ -78,6 +79,8 @@ export default function PaginationDynamic({ meta }: PropsPagination) {
     setParams("pg", value.toString());
   };
 
+  if (meta.total <= 0) return null;
+
   return (
     <div className="flex flex-wrap items-center justify-end space-x-2 p-3 border-t border-dashed">
       <div className="flex-1 text-sm text-muted-foreground">
@@ -91,7 +94,7 @@ export default function PaginationDynamic({ meta }: PropsPagination) {
           </SelectTrigger>
           <SelectContent align="start">
             <SelectGroup>
-              {listRowPage.map((item, index) => (
+              {listRowPagination.map((item, index) => (
                 <SelectItem key={index} value={`${item}`}>
                   {item}
                 </SelectItem>

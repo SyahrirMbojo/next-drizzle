@@ -12,12 +12,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { updateuser } from "./user-server";
 
 export default function EditUser({ userModel }: { userModel: UserModel }) {
   const [open, setOpen] = useState(false);
@@ -32,14 +33,22 @@ export default function EditUser({ userModel }: { userModel: UserModel }) {
   } = useForm<UpdateUserFormData>({
     resolver: zodResolver(updateUserSchema),
     defaultValues: {
-      name: userModel.name!,
+      name: userModel.name ?? "",
       email: userModel.email,
     },
   });
 
-  const handleCreate = () => {
+  useEffect(() => {
+    if (open) {
+      reset({
+        name: userModel.name ?? "",
+        email: userModel.email,
+      });
+    }
+  }, [open, userModel, reset]);
+
+  const handleEdit = () => {
     setOpen(true);
-    reset();
   };
 
   const handleClose = () => {
@@ -47,42 +56,27 @@ export default function EditUser({ userModel }: { userModel: UserModel }) {
   };
 
   const onSubmit = async (data: UpdateUserFormData) => {
-    try {
-      const url = `/api/users/${userModel?.id}`;
-      const method = "PATCH";
-
-      const response = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        setError(result.message || "An error occurred");
-        return;
-      }
-
-      router.refresh();
+    const { success, message } = await updateuser(userModel.id, data);
+    if (success) {
       handleClose();
-    } catch (err) {
-      setError("An error occurred. Please try again.");
+      router.refresh();
+    } else {
+      setError(message);
     }
   };
 
   return (
     <Fragment>
-      <Button variant="outline" size="icon" onClick={handleCreate}>
+      <Button variant="outline" size="icon" onClick={handleEdit}>
         <PencilIcon />
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>Create New User</DialogTitle>
+            <DialogTitle>Edit User</DialogTitle>
             <DialogDescription>
-              Fill in the information below to create a new user.
+              Fill in the information below to edit user.
             </DialogDescription>
           </DialogHeader>
 

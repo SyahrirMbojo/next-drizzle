@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,6 +17,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { createUser } from "./user-server";
 
 export default function AddUser() {
   const [open, setOpen] = useState(false);
@@ -47,27 +47,12 @@ export default function AddUser() {
   };
 
   const onSubmit = async (data: CreateUserFormData) => {
-    try {
-      const url = "/api/users";
-      const method = "POST";
-
-      const response = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        setError(result.message || "An error occurred");
-        return;
-      }
-
+    const { success, message } = await createUser(data);
+    if (success) {
       handleClose();
       router.refresh();
-    } catch (err) {
-      setError("An error occurred. Please try again.");
+    } else {
+      setError(message);
     }
   };
 

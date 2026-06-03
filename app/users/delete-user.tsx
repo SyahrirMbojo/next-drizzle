@@ -1,45 +1,46 @@
 "use client";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { TrashIcon } from "@phosphor-icons/react";
+import { SpinnerIcon, TrashIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 import { Fragment } from "react/jsx-runtime";
 import { UserModel } from "./user-model";
 import { useRouter } from "next/navigation";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { deleteUser } from "./user-server";
 
 export default function DeleteUser({ userModel }: { userModel: UserModel }) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleOpen = () => {
     setDeleteDialogOpen(true);
   };
 
+  const handleClose = () => {
+    setDeleteDialogOpen(false);
+  };
+
   const confirmDelete = async () => {
     if (!userModel) return;
 
-    try {
-      const res = await fetch(`/api/users/${userModel.id}`, {
-        method: "DELETE",
-      });
-
-      if (res.ok) {
-        router.refresh();
-        setDeleteDialogOpen(false);
-      }
-    } catch (error) {
-      console.error("Error deleting user:", error);
+    setLoading(true);
+    const { success, message } = await deleteUser(userModel.id);
+    if (success) {
+      setDeleteDialogOpen(false);
+      router.refresh();
+    } else {
+      console.error(message);
     }
+    setLoading(false);
   };
 
   return (
@@ -53,27 +54,43 @@ export default function DeleteUser({ userModel }: { userModel: UserModel }) {
         <TrashIcon />
       </Button>
 
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete User</AlertDialogTitle>
-            <AlertDialogDescription>
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent showCloseButton={false}>
+          <DialogHeader>
+            <DialogTitle>Delete User</DialogTitle>
+            <DialogDescription>
               Are you sure you want to delete{" "}
               <span className="font-semibold">{userModel?.name}</span>? This
               action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={loading}
+              onClick={handleClose}
             >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={loading}
+              onClick={confirmDelete}
+              className="bg-destructive text-destructive-foreground text-white hover:bg-destructive/90"
+            >
+              {loading ? (
+                <>
+                  <SpinnerIcon className="mr-2 h-4 w-4 animate-spin" />
+                  {"Deleting..."}
+                </>
+              ) : (
+                "Delete"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Fragment>
   );
 }
