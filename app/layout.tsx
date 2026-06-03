@@ -13,6 +13,24 @@ const fontMono = Geist_Mono({
   variable: "--font-mono",
 });
 
+function ThemeScript() {
+  return (
+    <script
+      dangerouslySetInnerHTML={{
+        __html: `
+          (function() {
+            var saved = localStorage.getItem('theme-primary');
+            if (saved) {
+              document.documentElement.style.setProperty('--primary', oklch(saved));
+              document.documentElement.style.setProperty('--sidebar-primary', oklch(saved));
+            }
+          })();
+        `,
+      }}
+    />
+  );
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -30,6 +48,9 @@ export default function RootLayout({
         geistHeading.variable,
       )}
     >
+      <head>
+        <ThemeScript />
+      </head>
       <body className="bg-sidebar">
         <MainLayout>{children}</MainLayout>
       </body>

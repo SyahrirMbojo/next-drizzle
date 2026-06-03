@@ -7,6 +7,7 @@ import { AppSidebar } from "./app-sidebar";
 import NavbarMenu from "./navbar-menu";
 import { usePathname } from "next/navigation";
 import { SessionProvider } from "next-auth/react";
+import { ThemeContextProvider } from "@/providers/theme-context-provider";
 
 export default function MainLayout({
   children,
@@ -18,19 +19,21 @@ export default function MainLayout({
   return (
     <SessionProvider>
       <ThemeProvider>
-        <TooltipProvider>
-          {isAuth ? (
-            children
-          ) : (
-            <SidebarProvider>
-              <AppSidebar variant="inset" />
-              <SidebarInset>
-                <NavbarMenu />
-                {children}
-              </SidebarInset>
-            </SidebarProvider>
-          )}
-        </TooltipProvider>
+        <ThemeContextProvider>
+          <TooltipProvider>
+            {isAuth ? (
+              children
+            ) : (
+              <SidebarProvider>
+                <AppSidebar variant="inset" />
+                <SidebarInset>
+                  <NavbarMenu />
+                  {children}
+                </SidebarInset>
+              </SidebarProvider>
+            )}
+          </TooltipProvider>
+        </ThemeContextProvider>
       </ThemeProvider>
     </SessionProvider>
   );

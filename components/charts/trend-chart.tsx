@@ -54,13 +54,13 @@ export function TrendChart() {
           dataKey="visitors"
           stroke="var(--color-primary)"
           fill="var(--color-primary)"
-          fillOpacity={0.3}
+          fillOpacity={0.4}
         />
         <Area
           type="monotone"
           dataKey="pageViews"
-          stroke="#22c55e"
-          fill="#22c55e"
+          stroke="var(--color-primary)"
+          fill="var(--color-primary)"
           fillOpacity={0.3}
         />
       </AreaChart>

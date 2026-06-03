@@ -13,7 +13,7 @@ export default function HeaderSidebar() {
             </div>
             <div className="flex flex-col gap-0.5 leading-none">
               <span className="font-bold text-base">Mbojo UI</span>
-              <span className="text-xs text-green-600">v1.0.0</span>
+              <span className="text-xs text-primary">v1.0.0</span>
             </div>
           </a>
         </SidebarMenuButton>
