@@ -1,15 +1,6 @@
 import { db } from "@/lib/db";
 import { users } from "@/db/schema";
 import { eq, like, or, desc } from "drizzle-orm";
-import { PgSelect } from "drizzle-orm/pg-core";
-
-function withPagination<T extends PgSelect>(
-	qb: T,
-	page: number = 1,
-	pageSize: number = 10,
-) {
-	return qb.limit(pageSize).offset((page - 1) * pageSize);
-}
 
 export async function getListUser(pg?: number, lm?: number, search?: string) {
     try {
@@ -49,16 +40,15 @@ export async function getListUser(pg?: number, lm?: number, search?: string) {
             .offset(offset);
         }
     
-        // const totalCountResult = await db.select({ count: users.id }).from(users);
-        // const totalCount = totalCountResult.length;
+        const totalCountResult = await db.select({ count: users.id }).from(users);
+        const totalCount = totalCountResult.length;
 
-        const totalData = allUsers.length;
-        const totalPages = Math.ceil(totalData / limit)
+        const totalPages = Math.ceil(totalCount / limit)
 
         const results = {
             data: allUsers,
             meta: {
-                total: totalData,
+                total: totalCount,
                 page,
                 limit,
                 totalPages

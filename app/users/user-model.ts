@@ -1,5 +1,12 @@
 import z from "zod";
 
+export type MetaModel = {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+};
+
 export type UserModel = {
   id: string;
   name: string | null;

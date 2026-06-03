@@ -39,6 +39,7 @@ export default function AddUser() {
 
   const handleCreate = () => {
     setOpen(true);
+    reset();
   };
 
   const handleClose = () => {
@@ -63,9 +64,8 @@ export default function AddUser() {
         return;
       }
 
-      router.refresh();
       handleClose();
-      reset();
+      router.refresh();
     } catch (err) {
       setError("An error occurred. Please try again.");
     }

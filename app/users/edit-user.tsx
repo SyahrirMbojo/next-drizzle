@@ -39,6 +39,7 @@ export default function EditUser({ userModel }: { userModel: UserModel }) {
 
   const handleCreate = () => {
     setOpen(true);
+    reset();
   };
 
   const handleClose = () => {
@@ -65,7 +66,6 @@ export default function EditUser({ userModel }: { userModel: UserModel }) {
 
       router.refresh();
       handleClose();
-      reset();
     } catch (err) {
       setError("An error occurred. Please try again.");
     }
